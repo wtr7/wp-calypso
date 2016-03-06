@@ -125,7 +125,12 @@ class EditorPermalink extends Component {
 		}
 
 		return (
-			<button className="editor-permalink" onMouseEnter={ this.showTooltip } onMouseLeave={ this.hideTooltip }>
+			<button
+				className="editor-permalink"
+				onMouseEnter={ this.showTooltip }
+				onMouseLeave={ this.hideTooltip }
+				onClick={ this.showPopover }
+			>
 				<Gridicon
 					className="editor-permalink__toggle"
 					icon="link"
