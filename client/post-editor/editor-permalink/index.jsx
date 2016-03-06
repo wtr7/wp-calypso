@@ -125,7 +125,7 @@ class EditorPermalink extends Component {
 		}
 
 		return (
-			<div className="editor-permalink" onMouseEnter={ this.showTooltip } onMouseLeave={ this.hideTooltip }>
+			<button className="editor-permalink" onMouseEnter={ this.showTooltip } onMouseLeave={ this.hideTooltip }>
 				<Gridicon
 					className="editor-permalink__toggle"
 					icon="link"
@@ -153,7 +153,7 @@ class EditorPermalink extends Component {
 				>
 					{ tooltipMessage }
 				</Tooltip>
-			</div>
+			</button>
 		);
 	}
 }
