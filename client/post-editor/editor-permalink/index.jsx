@@ -148,6 +148,7 @@ class EditorPermalink extends Component {
 						{ ...pick( this.props, 'path', 'isEditable' ) }
 						onEscEnter={ this.closePopover }
 						instanceName="post-popover"
+						isVisible= { this.state.popoverVisible }
 					/>
 					{ this.renderCopyButton() }
 				</Popover>
