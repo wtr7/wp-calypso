@@ -33,9 +33,9 @@ import {
 import sitesFactory from 'lib/sites-list';
 import { FEATURE_ADVANCED_DESIGN } from 'lib/plans/constants';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
+import { canCurrentUser } from 'state/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-import { canCurrentUser } from 'state/current-user/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import ThemeShowcase from './theme-showcase';
 
