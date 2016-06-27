@@ -2,7 +2,6 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	{ connect } = require( 'react-redux' ),
 	defer = require( 'lodash/defer' ),
 	page = require( 'page' ),
 	i18n = require( 'i18n-calypso' );
@@ -14,7 +13,7 @@ var StepWrapper = require( 'signup/step-wrapper' ),
 	productsList = require( 'lib/products-list' )(),
 	cartItems = require( 'lib/cart-values' ).cartItems,
 	SignupActions = require( 'lib/signup/actions' ),
-	MapDomainStep = require( 'components/domains/map-domain-step' ),
+	MapDomain = require( 'components/domains/map-domain' ),
 	RegisterDomainStep = require( 'components/domains/register-domain-step' ),
 	GoogleApps = require( 'components/upgrades/google-apps' ),
 	{ getCurrentUser, currentUserHasFlag } = require( 'state/current-user/selectors' ),
@@ -29,7 +28,9 @@ import Notice from 'components/notice';
 const registerDomainAnalytics = analyticsMixin( 'registerDomain' ),
 	mapDomainAnalytics = analyticsMixin( 'mapDomain' );
 
-const DomainsStep = React.createClass( {
+module.exports = React.createClass( {
+	displayName: 'DomainsStep',
+
 	showGoogleApps: function() {
 		page( signupUtils.getStepUrl( this.props.flowName, this.props.stepName, 'google', this.props.locale ) );
 	},
@@ -64,8 +65,6 @@ const DomainsStep = React.createClass( {
 			suggestion
 		};
 
-		registerDomainAnalytics.recordEvent( 'addDomainButtonClick', suggestion.domain_name, 'signup' );
-
 		if ( this.props.step.suggestion &&
 			this.props.step.suggestion.domain_name !== suggestion.domain_name ) {
 			// overwrite the Google Apps data if the user goes back and selects a different domain
@@ -96,7 +95,7 @@ const DomainsStep = React.createClass( {
 
 	getThemeArgs: function() {
 		const themeSlug = this.getThemeSlug(),
-			themeSlugWithRepo = this.getThemeSlugWithRepo( themeSlug ),
+			themeSlugWithRepo = this.getThemeSlugWithRepo(),
 			themeItem = this.isPurchasingTheme()
 			? cartItems.themeItem( themeSlug, 'signup-with-theme' )
 			: undefined;
@@ -104,12 +103,13 @@ const DomainsStep = React.createClass( {
 		return { themeSlug, themeSlugWithRepo, themeItem };
 	},
 
-	getThemeSlugWithRepo: function( themeSlug ) {
+	getThemeSlugWithRepo: function() {
+		const themeSlug = this.getThemeSlug();
 		if ( ! themeSlug ) {
 			return undefined;
 		}
-		const repo = this.isPurchasingTheme() ? 'premium' : 'pub';
-		return `${repo}/${themeSlug}`;
+		// Only allow free themes for now; a valid theme value here (free or premium) will cause a theme_switch by Headstart.
+		return this.isPurchasingTheme() ? undefined : 'pub/' + themeSlug;
 	},
 
 	submitWithDomain: function( googleAppsCartItem ) {
@@ -141,8 +141,6 @@ const DomainsStep = React.createClass( {
 	handleAddMapping: function( sectionName, domain, state ) {
 		const domainItem = cartItems.domainMapping( { domain } );
 		const isPurchasingItem = true;
-
-		mapDomainAnalytics.recordEvent( 'addDomainButtonClick', domain, 'signup' );
 
 		SignupActions.submitSignupStep( Object.assign( {
 			processingMessage: this.translate( 'Adding your domain mapping' ),
@@ -183,7 +181,8 @@ const DomainsStep = React.createClass( {
 
 	domainForm: function() {
 		const initialState = this.props.step ? this.props.step.domainForm : this.state.domainForm;
-
+		const isPlansOnlyTest = abtest( 'domainsWithPlansOnly' ) === 'plansOnly';
+		const isDeveloperFlow = 'developer' === this.props.flowName;
 		return (
 			<RegisterDomainStep
 				path={ this.props.path }
@@ -194,13 +193,17 @@ const DomainsStep = React.createClass( {
 				mapDomainUrl={ this.getMapDomainUrl() }
 				onAddMapping={ this.handleAddMapping.bind( this, 'domainForm' ) }
 				onSave={ this.handleSave.bind( this, 'domainForm' ) }
-				offerMappingOption
+				offerMappingOption={ ! isDeveloperFlow }
 				analyticsSection="signup"
-				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+				withPlansOnly={ isPlansOnlyTest }
 				includeWordPressDotCom
 				isSignupStep
+<<<<<<< c6830f3d7164861bd28b064681c8fe5c9d10d51e
 				showExampleSuggestions
 				surveyVertical={ this.props.surveyVertical }
+=======
+				showExampleSuggestions={ ! isDeveloperFlow }
+>>>>>>> Only show the mapping option in non-developer flows.
 				suggestion={ this.props.queryObject ? this.props.queryObject.new : '' } />
 		);
 	},
@@ -211,14 +214,14 @@ const DomainsStep = React.createClass( {
 
 		return (
 			<div className="domains-step__section-wrapper">
-				<MapDomainStep
+				<MapDomain
 					initialState={ initialState }
 					path={ this.props.path }
-					onRegisterDomain={ this.handleAddDomain }
-					onMapDomain={ this.handleAddMapping.bind( this, 'mappingForm' ) }
+					onAddDomain={ this.handleAddDomain }
+					onAddMapping={ this.handleAddMapping.bind( this, 'mappingForm' ) }
 					onSave={ this.handleSave.bind( this, 'mappingForm' ) }
-					products={ productsList.get() }
-					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+					productsList={ productsList }
+					withPlansOnly={ abtest( 'domainsWithPlansOnly' ) === 'plansOnly' }
 					initialQuery={ initialQuery }
 					analyticsSection="signup" />
 			</div>
@@ -268,6 +271,7 @@ const DomainsStep = React.createClass( {
 		);
 	}
 } );
+<<<<<<< c6830f3d7164861bd28b064681c8fe5c9d10d51e
 
 module.exports = connect( ( state ) => {
 	return {
@@ -276,3 +280,5 @@ module.exports = connect( ( state ) => {
 		surveyVertical: getSurveyVertical( state ),
 	};
 } ) ( DomainsStep );
+=======
+>>>>>>> Only show the mapping option in non-developer flows.
