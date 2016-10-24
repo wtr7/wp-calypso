@@ -168,6 +168,14 @@ const DomainsStep = React.createClass( {
 		} );
 	},
 
+	getSuggestion: function() {
+		if ( this.props.queryObject && this.props.queryObject.new ) {
+			return this.props.queryObject.new;
+		}
+
+		return 'developer' === this.props.flowName ? 'calypsodev' : '';
+	},
+
 	googleAppsForm: function() {
 		return (
 			<div className="domains-step__section-wrapper">
@@ -202,17 +210,9 @@ const DomainsStep = React.createClass( {
 				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 				includeWordPressDotCom
 				isSignupStep
-<<<<<<< c1845b89bd8d055ac4a59cfbfb8e8466ef78cbe9
-<<<<<<< c6830f3d7164861bd28b064681c8fe5c9d10d51e
-				showExampleSuggestions
-				surveyVertical={ this.props.surveyVertical }
-=======
 				showExampleSuggestions={ ! isDeveloperFlow }
->>>>>>> Only show the mapping option in non-developer flows.
-=======
-				showExampleSuggestions
->>>>>>> Update the Domains step to the current `master`.
-				suggestion={ this.props.queryObject ? this.props.queryObject.new : '' } />
+				surveyVertical={ this.props.surveyVertical }
+				suggestion={ this.getSuggestion() } />
 		);
 	},
 
