@@ -2,6 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	{ connect } = require( 'react-redux' ),
 	defer = require( 'lodash/defer' ),
 	page = require( 'page' ),
 	i18n = require( 'i18n-calypso' );
@@ -13,7 +14,7 @@ var StepWrapper = require( 'signup/step-wrapper' ),
 	productsList = require( 'lib/products-list' )(),
 	cartItems = require( 'lib/cart-values' ).cartItems,
 	SignupActions = require( 'lib/signup/actions' ),
-	MapDomain = require( 'components/domains/map-domain' ),
+	MapDomainStep = require( 'components/domains/map-domain-step' ),
 	RegisterDomainStep = require( 'components/domains/register-domain-step' ),
 	GoogleApps = require( 'components/upgrades/google-apps' ),
 	{ getCurrentUser, currentUserHasFlag } = require( 'state/current-user/selectors' ),
@@ -28,9 +29,10 @@ import Notice from 'components/notice';
 const registerDomainAnalytics = analyticsMixin( 'registerDomain' ),
 	mapDomainAnalytics = analyticsMixin( 'mapDomain' );
 
-module.exports = React.createClass( {
-	displayName: 'DomainsStep',
+const registerDomainAnalytics = analyticsMixin( 'registerDomain' ),
+	mapDomainAnalytics = analyticsMixin( 'mapDomain' );
 
+const DomainsStep = React.createClass( {
 	showGoogleApps: function() {
 		page( signupUtils.getStepUrl( this.props.flowName, this.props.stepName, 'google', this.props.locale ) );
 	},
@@ -65,6 +67,8 @@ module.exports = React.createClass( {
 			suggestion
 		};
 
+		registerDomainAnalytics.recordEvent( 'addDomainButtonClick', suggestion.domain_name, 'signup' );
+
 		if ( this.props.step.suggestion &&
 			this.props.step.suggestion.domain_name !== suggestion.domain_name ) {
 			// overwrite the Google Apps data if the user goes back and selects a different domain
@@ -95,7 +99,7 @@ module.exports = React.createClass( {
 
 	getThemeArgs: function() {
 		const themeSlug = this.getThemeSlug(),
-			themeSlugWithRepo = this.getThemeSlugWithRepo(),
+			themeSlugWithRepo = this.getThemeSlugWithRepo( themeSlug ),
 			themeItem = this.isPurchasingTheme()
 			? cartItems.themeItem( themeSlug, 'signup-with-theme' )
 			: undefined;
@@ -103,13 +107,12 @@ module.exports = React.createClass( {
 		return { themeSlug, themeSlugWithRepo, themeItem };
 	},
 
-	getThemeSlugWithRepo: function() {
-		const themeSlug = this.getThemeSlug();
+	getThemeSlugWithRepo: function( themeSlug ) {
 		if ( ! themeSlug ) {
 			return undefined;
 		}
-		// Only allow free themes for now; a valid theme value here (free or premium) will cause a theme_switch by Headstart.
-		return this.isPurchasingTheme() ? undefined : 'pub/' + themeSlug;
+		const repo = this.isPurchasingTheme() ? 'premium' : 'pub';
+		return `${repo}/${themeSlug}`;
 	},
 
 	submitWithDomain: function( googleAppsCartItem ) {
@@ -141,6 +144,8 @@ module.exports = React.createClass( {
 	handleAddMapping: function( sectionName, domain, state ) {
 		const domainItem = cartItems.domainMapping( { domain } );
 		const isPurchasingItem = true;
+
+		mapDomainAnalytics.recordEvent( 'addDomainButtonClick', domain, 'signup' );
 
 		SignupActions.submitSignupStep( Object.assign( {
 			processingMessage: this.translate( 'Adding your domain mapping' ),
@@ -181,8 +186,7 @@ module.exports = React.createClass( {
 
 	domainForm: function() {
 		const initialState = this.props.step ? this.props.step.domainForm : this.state.domainForm;
-		const isPlansOnlyTest = abtest( 'domainsWithPlansOnly' ) === 'plansOnly';
-		const isDeveloperFlow = 'developer' === this.props.flowName;
+
 		return (
 			<RegisterDomainStep
 				path={ this.props.path }
@@ -193,17 +197,21 @@ module.exports = React.createClass( {
 				mapDomainUrl={ this.getMapDomainUrl() }
 				onAddMapping={ this.handleAddMapping.bind( this, 'domainForm' ) }
 				onSave={ this.handleSave.bind( this, 'domainForm' ) }
-				offerMappingOption={ ! isDeveloperFlow }
+				offerMappingOption
 				analyticsSection="signup"
-				withPlansOnly={ isPlansOnlyTest }
+				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 				includeWordPressDotCom
 				isSignupStep
+<<<<<<< c1845b89bd8d055ac4a59cfbfb8e8466ef78cbe9
 <<<<<<< c6830f3d7164861bd28b064681c8fe5c9d10d51e
 				showExampleSuggestions
 				surveyVertical={ this.props.surveyVertical }
 =======
 				showExampleSuggestions={ ! isDeveloperFlow }
 >>>>>>> Only show the mapping option in non-developer flows.
+=======
+				showExampleSuggestions
+>>>>>>> Update the Domains step to the current `master`.
 				suggestion={ this.props.queryObject ? this.props.queryObject.new : '' } />
 		);
 	},
@@ -214,14 +222,14 @@ module.exports = React.createClass( {
 
 		return (
 			<div className="domains-step__section-wrapper">
-				<MapDomain
+				<MapDomainStep
 					initialState={ initialState }
 					path={ this.props.path }
-					onAddDomain={ this.handleAddDomain }
-					onAddMapping={ this.handleAddMapping.bind( this, 'mappingForm' ) }
+					onRegisterDomain={ this.handleAddDomain }
+					onMapDomain={ this.handleAddMapping.bind( this, 'mappingForm' ) }
 					onSave={ this.handleSave.bind( this, 'mappingForm' ) }
-					productsList={ productsList }
-					withPlansOnly={ abtest( 'domainsWithPlansOnly' ) === 'plansOnly' }
+					products={ productsList.get() }
+					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					initialQuery={ initialQuery }
 					analyticsSection="signup" />
 			</div>
@@ -271,14 +279,23 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+<<<<<<< c1845b89bd8d055ac4a59cfbfb8e8466ef78cbe9
 <<<<<<< c6830f3d7164861bd28b064681c8fe5c9d10d51e
+=======
+>>>>>>> Update the Domains step to the current `master`.
 
 module.exports = connect( ( state ) => {
 	return {
 		// no user = DOMAINS_WITH_PLANS_ONLY
+<<<<<<< c1845b89bd8d055ac4a59cfbfb8e8466ef78cbe9
 		domainsWithPlansOnly: getCurrentUser( state ) ? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ) : true,
 		surveyVertical: getSurveyVertical( state ),
 	};
 } ) ( DomainsStep );
 =======
 >>>>>>> Only show the mapping option in non-developer flows.
+=======
+		domainsWithPlansOnly: getCurrentUser( state ) ? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ) : true
+	};
+} ) ( DomainsStep );
+>>>>>>> Update the Domains step to the current `master`.
