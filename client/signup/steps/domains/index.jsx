@@ -198,6 +198,7 @@ const DomainsStep = React.createClass( {
 
 	domainForm: function() {
 		const initialState = this.props.step ? this.props.step.domainForm : this.state.domainForm;
+		const isDeveloperFlow = this.props.flowName;
 
 		return (
 			<RegisterDomainStep
@@ -216,6 +217,8 @@ const DomainsStep = React.createClass( {
 				isSignupStep
 				showExampleSuggestions={ ! isDeveloperFlow }
 				surveyVertical={ this.props.surveyVertical }
+				suggestionQuantity={ isDeveloperFlow ? 1 : undefined }
+				initialSuggestionQuantity={ isDeveloperFlow ? 0 : undefined }
 				suggestion={ this.getSuggestion() } />
 		);
 	},
@@ -283,23 +286,11 @@ const DomainsStep = React.createClass( {
 		);
 	}
 } );
-<<<<<<< c1845b89bd8d055ac4a59cfbfb8e8466ef78cbe9
-<<<<<<< c6830f3d7164861bd28b064681c8fe5c9d10d51e
-=======
->>>>>>> Update the Domains step to the current `master`.
 
 module.exports = connect( ( state ) => {
 	return {
 		// no user = DOMAINS_WITH_PLANS_ONLY
-<<<<<<< c1845b89bd8d055ac4a59cfbfb8e8466ef78cbe9
 		domainsWithPlansOnly: getCurrentUser( state ) ? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ) : true,
 		surveyVertical: getSurveyVertical( state ),
 	};
 } ) ( DomainsStep );
-=======
->>>>>>> Only show the mapping option in non-developer flows.
-=======
-		domainsWithPlansOnly: getCurrentUser( state ) ? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ) : true
-	};
-} ) ( DomainsStep );
->>>>>>> Update the Domains step to the current `master`.
