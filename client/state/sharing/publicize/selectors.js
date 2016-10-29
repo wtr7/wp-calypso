@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import filter from 'lodash/filter';
-import get from 'lodash/get';
+import { filter, get, some } from 'lodash';
 
 /**
  * Returns an array of known connections for the given site ID.
@@ -55,7 +54,6 @@ export function isFetchingConnections( state, siteId ) {
 	return hasFetchedConnections( state, siteId ) && fetchingConnections[ siteId ];
 }
 
-
 export function isRequestingSharePost( state, siteId, postId ) {
 	return get( state.sharing.publicize.sharePostStatus, [ siteId , postId, 'requesting' ], false );
 }
@@ -66,4 +64,8 @@ export function sharePostSuccessMessage( state, siteId, postId ) {
 
 export function sharePostFailure( state, siteId, postId ) {
 	return ( get( state.sharing.publicize.sharePostStatus, [ siteId , postId, 'error' ], false ) === true );
+}
+
+export function hasBrokenSiteUserConnection( state, siteId, userId ) {
+	return some( getSiteUserConnections( state, siteId, userId ), { status: 'broken' } );
 }
