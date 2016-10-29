@@ -18,7 +18,6 @@ describe( '#getConnectionsBySiteId()', () => {
 		const connections = getConnectionsBySiteId( {
 			sharing: {
 				publicize: {
-					connectionsBySiteId: {},
 					connections: {}
 				}
 			}
@@ -31,9 +30,6 @@ describe( '#getConnectionsBySiteId()', () => {
 		const connections = getConnectionsBySiteId( {
 			sharing: {
 				publicize: {
-					connectionsBySiteId: {
-						2916284: [ 1, 2 ]
-					},
 					connections: {
 						1: { ID: 1, site_ID: 2916284 },
 						2: { ID: 2, site_ID: 2916284 }
@@ -54,7 +50,6 @@ describe( '#getSiteUserConnections()', () => {
 		const connections = getSiteUserConnections( {
 			sharing: {
 				publicize: {
-					connectionsBySiteId: {},
 					connections: {}
 				}
 			}
@@ -63,13 +58,10 @@ describe( '#getSiteUserConnections()', () => {
 		expect( connections ).to.eql( [] );
 	} );
 
-	it( 'should return an array of connection objects received for the site that are available to the current user', () => {
+	it( 'should return an array of connection objects received for the site available to a user', () => {
 		const connections = getSiteUserConnections( {
 			sharing: {
 				publicize: {
-					connectionsBySiteId: {
-						2916284: [ 1, 2, 3 ]
-					},
 					connections: {
 						1: { ID: 1, site_ID: 2916284, shared: true },
 						2: { ID: 2, site_ID: 2916284, keyring_connection_user_ID: 26957695 },
