@@ -107,12 +107,9 @@ const RegisterDomainStep = React.createClass( {
 		suggestion: React.PropTypes.string,
 		domainsWithPlansOnly: React.PropTypes.bool,
 		isSignupStep: React.PropTypes.bool,
-<<<<<<< 95dcaa06c8f7106eaebfa37d9177cdfe6bef2d0a
 		surveyVertical: React.PropTypes.string,
-=======
 		suggestionQuantity: React.PropTypes.number,
 		initialSuggestionQuantity: React.PropTypes.number
->>>>>>> Allow suggestion quantities to be set by props, rather than fixed as
 	},
 
 	getDefaultProps: function() {

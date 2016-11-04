@@ -29,9 +29,6 @@ import Notice from 'components/notice';
 const registerDomainAnalytics = analyticsMixin( 'registerDomain' ),
 	mapDomainAnalytics = analyticsMixin( 'mapDomain' );
 
-const registerDomainAnalytics = analyticsMixin( 'registerDomain' ),
-	mapDomainAnalytics = analyticsMixin( 'mapDomain' );
-
 const DomainsStep = React.createClass( {
 	showGoogleApps: function() {
 		page( signupUtils.getStepUrl( this.props.flowName, this.props.stepName, 'google', this.props.locale ) );
