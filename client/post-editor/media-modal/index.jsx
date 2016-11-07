@@ -12,15 +12,14 @@ import { noop, head, some, findIndex, partial, values } from 'lodash';
  */
 var MediaLibrary = require( 'my-sites/media-library' ),
 	analytics = require( 'lib/analytics' ),
-	PostActions = require( 'lib/posts/actions' ),
 	PostStats = require( 'lib/posts/stats' ),
 	MediaModalSecondaryActions = require( './secondary-actions' ),
 	MediaModalGallery = require( './gallery' ),
 	MediaActions = require( 'lib/media/actions' ),
 	MediaUtils = require( 'lib/media/utils' ),
 	Dialog = require( 'components/dialog' ),
-	markup = require( './markup' ),
 	accept = require( 'lib/accept' );
+import { getSite } from 'state/sites/selectors';
 import { getMediaModalView } from 'state/ui/media-modal/selectors';
 import { resetMediaModalView } from 'state/ui/media-modal/actions';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
@@ -103,39 +102,10 @@ export const EditorMediaModal = React.createClass( {
 	},
 
 	confirmSelection: function() {
-		var selectedItems = this.props.mediaLibrarySelectedItems,
-			gallerySettings = this.state.gallerySettings,
-			media, stat;
+		const { mediaLibrarySelectedItems } = this.props;
+		const { gallerySettings } = this.state;
 
-		if ( ! this.props.visible ) {
-			return;
-		}
-
-		if ( ModalViews.GALLERY === this.props.view ) {
-			if ( gallerySettings && 'individual' === gallerySettings.type ) {
-				media = gallerySettings.items.map( markup.get ).join( '' );
-			} else {
-				media = MediaUtils.generateGalleryShortcode( gallerySettings );
-			}
-			stat = 'insert_gallery';
-		} else {
-			media = selectedItems.map( markup.get ).join( '' );
-			stat = 'insert_item';
-		}
-
-		if ( some( selectedItems, 'transient' ) ) {
-			PostActions.blockSave( 'MEDIA_MODAL_TRANSIENT_INSERT' );
-		}
-
-		if ( media ) {
-			this.props.onInsertMedia( media );
-
-			if ( stat ) {
-				analytics.mc.bumpStat( 'editor_media_actions', stat );
-			}
-		}
-
-		this.props.onClose( selectedItems );
+		this.props.onClose( mediaLibrarySelectedItems, { gallerySettings } );
 	},
 
 	setDetailSelectedIndex: function( index ) {
@@ -462,8 +432,11 @@ export const EditorMediaModal = React.createClass( {
 } );
 
 export default connect(
-	( state ) => ( {
-		view: getMediaModalView( state )
+	( state, { site, siteId } ) => ( {
+		view: getMediaModalView( state ),
+		// [TODO]: Migrate descendant components to retrieve site independently
+		// from state, rather than requiring full site object to be passed
+		site: site || getSite( state, siteId )
 	} ),
 	{
 		setView: setEditorMediaModalView,
