@@ -15,7 +15,6 @@ import {
 	createSiteConnection,
 	deleteSiteConnection,
 	failCreateConnection,
-	fetchConnections,
 	refreshSiteConnection,
 	updateSiteConnection,
 } from 'state/sharing/publicize/actions';
@@ -34,6 +33,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import observe from 'lib/mixins/data-observe';
 import PopupMonitor from 'lib/popup-monitor';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import { requestKeyringConnections } from 'state/sharing/keyring/actions';
 import services from './services';
 import ServiceAction from './service-action';
 import ServiceConnectedAccounts from './service-connected-accounts';
@@ -51,12 +51,12 @@ const SharingService = React.createClass( {
 		deleteSiteConnection: PropTypes.func,
 		errorNotice: PropTypes.func,
 		failCreateConnection: PropTypes.func,
-		fetchConnections: PropTypes.func,
 		isFetching: PropTypes.bool,
 		keyringConnections: PropTypes.arrayOf( PropTypes.object ),
 		recordGoogleEvent: PropTypes.func,
 		refreshSiteConnection: PropTypes.func,
 		removableConnections: PropTypes.arrayOf( PropTypes.object ),
+		requestKeyringConnections: PropTypes.func,
 		service: PropTypes.object.isRequired,     // The single service object
 		siteId: PropTypes.number,                 // The site ID for which connections are created
 		siteUserConnections: PropTypes.arrayOf( PropTypes.object ),
@@ -85,11 +85,11 @@ const SharingService = React.createClass( {
 			deleteSiteConnection: () => {},
 			errorNotice: () => {},
 			failCreateConnection: () => {},
-			fetchConnections: () => {},
 			isFetching: false,
 			keyringConnections: Object.freeze( [] ),
 			recordGoogleEvent: () => {},
 			refreshSiteConnection: () => {},
+			requestKeyringConnections: () => {},
 			removableConnections: Object.freeze( [] ),
 			site: Object.freeze( {} ),
 			siteId: 0,
@@ -144,7 +144,7 @@ const SharingService = React.createClass( {
 				popupMonitor.once( 'close', () => {
 					// When the user has finished authorizing the connection
 					// (or otherwise closed the window), force a refresh
-					this.props.fetchConnections( this.props.siteId );
+					this.props.requestKeyringConnections();
 
 					// In the case that a Keyring connection doesn't exist, wait for app
 					// authorization to occur, then display with the available connections
@@ -434,9 +434,9 @@ export default connect(
 		deleteSiteConnection,
 		errorNotice,
 		failCreateConnection,
-		fetchConnections,
 		recordGoogleEvent,
 		refreshSiteConnection,
+		requestKeyringConnections,
 		updateSiteConnection,
 	},
 )( localize( SharingService ) );
