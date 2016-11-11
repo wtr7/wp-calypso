@@ -156,7 +156,6 @@ const CurrentSite = React.createClass( {
 					? <Site
 						site={ site }
 						homeLink={ true }
-						enableActions={ true }
 						externalLink={ true }
 						onClick={ this.previewSite }
 						onSelect={ this.previewSite }
