@@ -74,9 +74,6 @@ const CurrentSite = React.createClass( {
 		event.preventDefault();
 		event.stopPropagation();
 		this.props.setLayoutFocus( 'sites' );
-		if ( this.refs.site ) {
-			this.refs.site.closeActions();
-		}
 
 		analytics.ga.recordEvent( 'Sidebar', 'Clicked Switch Site' );
 	},
