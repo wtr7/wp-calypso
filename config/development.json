@@ -38,6 +38,7 @@
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
 		"devdocs/components-usage-stats": false,
+		"devdocs/knobs": false,
 		"dev/test-helper": true,
 		"guided-tours": true,
 		"guided-tours/main": true,
