@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import AsyncLoad from 'components/async-load';
+import Dialog from 'components/dialog';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
@@ -30,16 +31,23 @@ class SiteIconMediaModal extends Component {
 
 	render() {
 		const { visible, siteId } = this.props;
+		if ( ! visible ) {
+			return null;
+		}
 
 		return (
 			<MediaLibrarySelectedData siteId={ siteId }>
 				<AsyncLoad
 					require="post-editor/media-modal"
-					placeholder={ null }
-					visible={ visible }
+					placeholder={ (
+						<Dialog
+							additionalClassNames="editor-media-modal"
+							isVisible />
+					) }
 					siteId={ siteId }
 					onClose={ this.setSiteIcon }
 					enabledFilters={ [ 'images' ] }
+					visible
 					single />
 			</MediaLibrarySelectedData>
 		);

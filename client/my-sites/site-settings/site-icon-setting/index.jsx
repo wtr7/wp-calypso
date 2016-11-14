@@ -38,6 +38,10 @@ class SiteIconSetting extends Component {
 
 	showModal = () => this.toggleModal( true );
 
+	preloadModal() {
+		asyncRequire( 'post-editor/media-modal' );
+	}
+
 	render() {
 		const { translate, siteId, isJetpack, customizerUrl, generalOptionsUrl } = this.props;
 		const isIconManagementEnabled = isEnabled( 'manage/site-settings/site-icon' );
@@ -46,7 +50,8 @@ class SiteIconSetting extends Component {
 		if ( isIconManagementEnabled ) {
 			buttonProps = {
 				type: 'button',
-				onClick: this.showModal
+				onClick: this.showModal,
+				onMouseEnter: this.preloadModal
 			};
 		} else {
 			buttonProps = { rel: 'external' };
