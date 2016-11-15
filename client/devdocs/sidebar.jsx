@@ -68,6 +68,13 @@ export default React.createClass( {
 						/>
 						<SidebarItem
 							className="devdocs__navigation-item"
+							icon="plugins"
+							label="Selectors"
+							link="/devdocs/selectors"
+							selected={ '/devdocs/selectors' === this.props.path }
+						/>
+						<SidebarItem
+							className="devdocs__navigation-item"
 							icon="heading"
 							label="Typography"
 							link="/devdocs/design/typography"

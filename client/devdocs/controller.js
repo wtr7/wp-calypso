@@ -16,6 +16,7 @@ import DocsComponent from './main';
 import SingleDocComponent from './doc';
 import DesignAssetsComponent from './design';
 import Blocks from './design/blocks';
+import Selectors from './selectors';
 import Typography from './design/typography';
 import DevWelcome from './welcome';
 import Sidebar from './sidebar';
@@ -110,6 +111,16 @@ const devdocs = {
 					component: context.params.component
 				} )
 			),
+			document.getElementById( 'primary' )
+		);
+	},
+
+	selectors: function( context ) {
+		ReactDom.render(
+			React.createElement( Selectors, {
+				selector: context.params.selector,
+				search: context.query.search
+			} ),
 			document.getElementById( 'primary' )
 		);
 	},
