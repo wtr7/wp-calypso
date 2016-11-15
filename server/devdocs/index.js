@@ -228,12 +228,9 @@ module.exports = function() {
 
 	// In environments where enabled, prime the selectors search cache whenever
 	// a request is made for DevDocs
-	app.use( '/devdocs', ( error, request, response, next ) => {
-		if ( ! error ) {
-			selectors.prime();
-		}
-
-		next( error );
+	app.use( '/devdocs', function( request, response, next ) {
+		selectors.prime();
+		next();
 	} );
 
 	app.use( '/devdocs/service/selectors', selectors.router );
