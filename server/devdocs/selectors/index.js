@@ -14,7 +14,6 @@ const forEach = require( 'lodash/forEach' );
  */
 
 const REGEXP_DOCBLOCKS = /\/\*\* *\n( *\*.*\n)* *\*\//g;
-const REGEXP_DEPENDENCY_DESCRIPTION = /(In|Ex)ternal dependencies/i;
 const SELECTORS_DIR = path.resolve( __dirname, '../../../client/state/selectors' );
 
 /**
@@ -37,7 +36,7 @@ function parseSelectorFile( file ) {
 
 			forEach( contents.match( REGEXP_DOCBLOCKS ), ( docblock ) => {
 				const doc = doctrine.parse( docblock, { unwrap: true } );
-				if ( ! REGEXP_DEPENDENCY_DESCRIPTION.test( doc.description ) ) {
+				if ( doc.tags.length > 0 ) {
 					Object.assign( selector, doc );
 					return false;
 				}
