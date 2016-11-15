@@ -1,9 +1,9 @@
-@import 'plugins/wplink/style';
-@import 'plugins/calypso-alert/style';
-@import 'plugins/insert-menu/style';
-@import 'plugins/wpcom-help/style';
-@import 'plugins/wpcom-charmap/style';
-@import 'plugins/contact-form/style';
+@import 'plugins/wplink/wplink';
+@import 'plugins/calypso-alert/calypso-alert';
+@import 'plugins/insert-menu/insert-menu';
+@import 'plugins/wpcom-help/wpcom-help';
+@import 'plugins/wpcom-charmap/wpcom-charmap';
+@import 'plugins/contact-form/contact-form';
 
 .tinymce {
 	display: none;
@@ -237,7 +237,7 @@
 	margin-left: 4px;
 }
 
-@import 'plugins/advanced/style';
+@import 'plugins/advanced/advanced';
 
 /*------------------------------------------------------------------------------
 	TinyMCE and Quicklinks toolbars
