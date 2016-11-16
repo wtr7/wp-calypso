@@ -57,14 +57,18 @@
 	tbody th {
 		width: 25%;
 		text-align: right;
+		font-weight: 400;
+	}
+
+	tbody th strong {
+		font-weight: 600;
 	}
 
 	tbody {
 		th,
 		td {
-			padding-left: 8px;
-			padding-right: 8px;
-			line-height: 1.8;
+			padding: 4px 8px;
+			line-height: 1.4;
 		}
 	}
 
@@ -74,6 +78,19 @@
 
 	.docs-selectors__result.is-expanded & {
 		display: table;
+	}
+}
+
+.docs-selectors__param-type {
+	color: $gray;
+
+	&,
+	& code {
+		font-size: 12px;
+	}
+
+	span {
+		padding-left: 4px;
 	}
 }
 

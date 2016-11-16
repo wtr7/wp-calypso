@@ -9,6 +9,7 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import Card from 'components/card';
+import DocsSelectorsParamType from './param-type';
 
 export default function DocsSelectorsResult( { url, name, description, tags, expanded } ) {
 	const paramTags = filter( tags, { title: 'param' } );
@@ -35,7 +36,10 @@ export default function DocsSelectorsResult( { url, name, description, tags, exp
 				<tbody>
 					{ paramTags.map( ( tag ) => (
 						<tr key={ tag.name }>
-							<th>{ tag.name }</th>
+							<th>
+								<strong>{ tag.name }</strong>
+								<DocsSelectorsParamType { ...tag.type } />
+							</th>
 							<td>{ tag.description }</td>
 						</tr>
 					) ) }
@@ -45,6 +49,7 @@ export default function DocsSelectorsResult( { url, name, description, tags, exp
 				<div className="docs-selectors__result-return">
 					<span className="docs-selectors__result-label">Returns</span>
 					<p>{ returnTag.description }</p>
+					<DocsSelectorsParamType { ...returnTag.type } />
 				</div>
 			) }
 		</Card>
