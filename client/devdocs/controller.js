@@ -16,7 +16,7 @@ import DocsComponent from './main';
 import SingleDocComponent from './doc';
 import DesignAssetsComponent from './design';
 import Blocks from './design/blocks';
-import Selectors from './selectors';
+import DocsSelectors from './docs-selectors';
 import Typography from './design/typography';
 import DevWelcome from './welcome';
 import Sidebar from './sidebar';
@@ -117,7 +117,7 @@ const devdocs = {
 
 	selectors: function( context ) {
 		ReactDom.render(
-			React.createElement( Selectors, {
+			React.createElement( DocsSelectors, {
 				selector: context.params.selector,
 				search: context.query.search
 			} ),
