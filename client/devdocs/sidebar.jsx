@@ -69,7 +69,7 @@ export default React.createClass( {
 						<SidebarItem
 							className="devdocs__navigation-item"
 							icon="plugins"
-							label="Selectors"
+							label="State Selectors"
 							link="/devdocs/selectors"
 							selected={ 0 === this.props.path.indexOf( '/devdocs/selectors' ) }
 						/>
