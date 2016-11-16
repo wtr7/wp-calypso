@@ -65,11 +65,13 @@ function prime() {
 				resolve( new Fuse( selectors, {
 					keys: [ {
 						name: 'name',
-						weight: 0.7
+						weight: 0.9
 					}, {
 						name: 'description',
-						weight: 0.3
-					} ]
+						weight: 0.1
+					} ],
+					threshold: 0.4,
+					distance: 20
 				} ) );
 			} );
 		} );
