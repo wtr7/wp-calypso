@@ -58,6 +58,9 @@ function prime() {
 				return reject( error );
 			}
 
+			// Omit index, system files, and subdirectories
+			files = files.filter( ( file ) => 'index.js' !== file && /\.js$/.test( file ) );
+
 			Promise.all( files.map( parseSelectorFile ) ).then( ( selectors ) => {
 				// Sort selectors by name alphabetically
 				selectors.sort( ( a, b ) => a.name > b.name );
