@@ -37,3 +37,15 @@ export function isActivatingModule( state, siteId, moduleSlug ) {
 export function isDeactivatingModule( state, siteId, moduleSlug ) {
 	return get( state.jetpackSettings.jetpackModules.requests, [ siteId, moduleSlug, 'deactivating' ], null );
 }
+
+/**
+ * Returns true if we are currently making a request to get the list of Jetpack
+ * modules on the site
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {String}  siteId The ID of the site we're querying
+ * @return {?Boolean}         Whether the list is being requested
+ */
+export function isFetchingModules( state, siteId ) {
+	return get( state.jetpackSettings.jetpackModules.requests, [ siteId, 'fetchingModules' ], null );
+}
