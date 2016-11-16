@@ -24,27 +24,29 @@ export default function DocsSelectorsResult( { url, name, description, tags, exp
 				{ url && <a href={ url }>{ name }</a> }
 				{ ! url && name }
 			</h1>
-			<p>{ description }</p>
-			<table className="docs-selectors__result-arguments">
-				<thead>
-					<tr>
-						<th colSpan="2">
-							<span className="docs-selectors__result-label">Arguments</span>
-						</th>
-					</tr>
-				</thead>
-				<tbody>
-					{ paramTags.map( ( tag ) => (
-						<tr key={ tag.name }>
-							<th>
-								<strong>{ tag.name }</strong>
-								<DocsSelectorsParamType { ...tag.type } />
+			<p>{ description || <em>No description available</em> }</p>
+			{ paramTags.length > 0 && (
+				<table className="docs-selectors__result-arguments">
+					<thead>
+						<tr>
+							<th colSpan="2">
+								<span className="docs-selectors__result-label">Arguments</span>
 							</th>
-							<td>{ tag.description }</td>
 						</tr>
-					) ) }
-				</tbody>
-			</table>
+					</thead>
+					<tbody>
+						{ paramTags.map( ( tag ) => (
+							<tr key={ tag.name }>
+								<th>
+									<strong>{ tag.name }</strong>
+									<DocsSelectorsParamType { ...tag.type } />
+								</th>
+								<td>{ tag.description }</td>
+							</tr>
+						) ) }
+					</tbody>
+				</table>
+			) }
 			{ returnTag && (
 				<div className="docs-selectors__result-return">
 					<span className="docs-selectors__result-label">Returns</span>
