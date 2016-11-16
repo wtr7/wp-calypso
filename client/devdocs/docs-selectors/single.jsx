@@ -33,7 +33,7 @@ export default class DocsSelectorsSingle extends Component {
 
 	request = ( selector ) => {
 		request.get( '/devdocs/service/selectors' )
-			.query( { selector } )
+			.query( { search: selector } )
 			.then( ( { body } ) => {
 				const result = find( body, { name: selector } );
 				this.setState( { result } );
