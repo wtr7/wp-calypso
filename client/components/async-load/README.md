@@ -35,4 +35,4 @@ In general usage, this should be passed as a string of the module to be imported
 	<tr><td>Required</td><td>No</td></tr>
 </table>
 
-A placeholder to be shown while the module is being asynchronously required. If omitted, a default placeholder will be shown. If you do not want a placeholder to be shown, explicitly pass `null` as the prop value.
+A placeholder to be shown while the module is being asynchronously required. If omitted, a default placeholder will be shown.

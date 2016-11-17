@@ -42,7 +42,7 @@ export default class AsyncLoad extends Component {
 			return <this.state.component { ...props } />;
 		}
 
-		if ( 'placeholder' in this.props ) {
+		if ( this.props.placeholder ) {
 			return this.props.placeholder;
 		}
 
