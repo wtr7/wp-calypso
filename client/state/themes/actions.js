@@ -112,38 +112,35 @@ export function requestThemes( siteId, query = {} ) {
  *
  * @param  {Number}   themeId Theme ID
  * @param  {Number}   siteId Site ID
- * @param  {Boolean}  isJetpack If the site is a Jetpack site
  * @return {Function}        Action thunk
  */
-export function requestTheme( themeId, siteId, isJetpack = false ) {
+export function requestTheme( themeId, siteId ) {
 	return ( dispatch ) => {
-		let siteIdToQuery, siteIdToStore;
+		let siteIdToQuery;
 
-		if ( isJetpack ) {
-			siteIdToQuery = siteId;
-			siteIdToStore = siteId;
-		} else {
+		if ( siteId === 'wpcom' ) {
 			siteIdToQuery = null;
-			siteIdToStore = 'wpcom'; // Themes for all wpcom sites go into 'wpcom' subtree
+		} else {
+			siteIdToQuery = siteId;
 		}
 
 		dispatch( {
 			type: THEME_REQUEST,
-			siteId: siteIdToStore,
+			siteId,
 			themeId
 		} );
 
 		return wpcom.undocumented().themeDetails( themeId, siteIdToQuery ).then( ( theme ) => {
-			dispatch( receiveTheme( theme, siteIdToStore ) );
+			dispatch( receiveTheme( theme, siteId ) );
 			dispatch( {
 				type: THEME_REQUEST_SUCCESS,
-				siteId: siteIdToStore,
+				siteId,
 				themeId
 			} );
 		} ).catch( ( error ) => {
 			dispatch( {
 				type: THEME_REQUEST_FAILURE,
-				siteId: siteIdToStore,
+				siteId,
 				themeId,
 				error
 			} );
