@@ -1,7 +1,7 @@
 CSS/Sass Coding Guidelines
 ==========================
 
-Every stylesheet should be easy to read, scan, add to, and collaborate on. Our current system and nomenclature builds on top of _components_, where CSS files live alongside the component they are styling: `component/style.scss`. Every file named `style.scss` under the `client` diretroy tree will automatically be imported via the generated `public/_components.scss`.
+Every stylesheet should be easy to read, scan, add to, and collaborate on. Our current system and nomenclature builds on top of _components_, where CSS files live alongside the component they are styling: `component/style.scss`. Every file named `style.scss` under the `client` directory tree will automatically be imported via the generated `public/_components.scss`.
 
 This is an example of a declaration:
 
