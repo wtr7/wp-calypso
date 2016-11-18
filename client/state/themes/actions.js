@@ -65,35 +65,33 @@ export function receiveThemes( themes, siteId ) {
 /**
  * Triggers a network request to fetch themes for the specified site and query.
  *
- * @param  {?Number}  siteId    Site ID
- * @param  {Boolean}  isJetpack If the site is a Jetpack site
- * @param  {String}   query     Theme query
- * @return {Function}           Action thunk
+ * @param  {Number|String}  siteId  Jetpack site ID or 'wpcom' for any WPCOM site
+ * @param  {String}         query   Theme query
+ * @return {Function}               Action thunk
  */
-export function requestThemes( siteId, isJetpack = false, query = {} ) {
+export function requestThemes( siteId, query = {} ) {
 	return ( dispatch ) => {
-		let siteIdToQuery, siteIdToStore, queryWithApiVersion;
+		let siteIdToQuery, queryWithApiVersion;
 
-		if ( isJetpack ) {
-			siteIdToQuery = siteId;
-			siteIdToStore = siteId;
-			queryWithApiVersion = { ...query, apiVersion: '1' };
-		} else {
+		if ( siteId === 'wpcom' ) {
 			siteIdToQuery = null;
-			siteIdToStore = 'wpcom'; // Themes for all wpcom sites go into 'wpcom' subtree
 			queryWithApiVersion = { ...query, apiVersion: '1.2' };
+		} else {
+			siteIdToQuery = siteId;
+			queryWithApiVersion = { ...query, apiVersion: '1' };
 		}
+
 		dispatch( {
 			type: THEMES_REQUEST,
-			siteId: siteIdToStore,
+			siteId,
 			query
 		} );
 
 		return wpcom.undocumented().themes( siteIdToQuery, queryWithApiVersion ).then( ( { found, themes } ) => {
-			dispatch( receiveThemes( themes, siteIdToStore ) );
+			dispatch( receiveThemes( themes, siteId ) );
 			dispatch( {
 				type: THEMES_REQUEST_SUCCESS,
-				siteId: siteIdToStore,
+				siteId,
 				query,
 				found,
 				themes
@@ -101,7 +99,7 @@ export function requestThemes( siteId, isJetpack = false, query = {} ) {
 		} ).catch( ( error ) => {
 			dispatch( {
 				type: THEMES_REQUEST_FAILURE,
-				siteId: siteIdToStore,
+				siteId,
 				query,
 				error
 			} );

@@ -108,7 +108,7 @@ describe( 'actions', () => {
 
 		context( 'with a wpcom site', () => {
 			it( 'should dispatch fetch action when thunk triggered', () => {
-				requestThemes( 2916284 )( spy );
+				requestThemes( 'wpcom' )( spy );
 
 				expect( spy ).to.have.been.calledWith( {
 					type: THEMES_REQUEST,
@@ -118,7 +118,7 @@ describe( 'actions', () => {
 			} );
 
 			it( 'should dispatch themes receive action when request completes', () => {
-				return requestThemes( 2916284 )( spy ).then( () => {
+				return requestThemes( 'wpcom' )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: THEMES_RECEIVE,
 						themes: [
@@ -131,7 +131,7 @@ describe( 'actions', () => {
 			} );
 
 			it( 'should dispatch themes request success action when request completes', () => {
-				return requestThemes( 2916284 )( spy ).then( () => {
+				return requestThemes( 'wpcom' )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: THEMES_REQUEST_SUCCESS,
 						siteId: 'wpcom',
@@ -146,7 +146,7 @@ describe( 'actions', () => {
 			} );
 
 			it( 'should dispatch themes request success action with query results', () => {
-				return requestThemes( 2916284, false, { search: 'Sixteen' } )( spy ).then( () => {
+				return requestThemes( 'wpcom', { search: 'Sixteen' } )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: THEMES_REQUEST_SUCCESS,
 						siteId: 'wpcom',
@@ -162,7 +162,7 @@ describe( 'actions', () => {
 
 		context( 'with a Jetpack site', () => {
 			it( 'should dispatch fetch action when thunk triggered', () => {
-				requestThemes( 77203074, true )( spy );
+				requestThemes( 77203074 )( spy );
 
 				expect( spy ).to.have.been.calledWith( {
 					type: THEMES_REQUEST,
@@ -172,7 +172,7 @@ describe( 'actions', () => {
 			} );
 
 			it( 'should dispatch themes receive action when request completes', () => {
-				return requestThemes( 77203074, true )( spy ).then( () => {
+				return requestThemes( 77203074 )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: THEMES_RECEIVE,
 						themes: [
@@ -185,7 +185,7 @@ describe( 'actions', () => {
 			} );
 
 			it( 'should dispatch themes request success action when request completes', () => {
-				return requestThemes( 77203074, true )( spy ).then( () => {
+				return requestThemes( 77203074 )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: THEMES_REQUEST_SUCCESS,
 						siteId: 77203074,
@@ -200,7 +200,7 @@ describe( 'actions', () => {
 			} );
 
 			it( 'should dispatch themes request success action with query results', () => {
-				return requestThemes( 77203074, true, { search: 'Sixteen' } )( spy ).then( () => {
+				return requestThemes( 77203074, { search: 'Sixteen' } )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: THEMES_REQUEST_SUCCESS,
 						siteId: 77203074,
@@ -214,7 +214,7 @@ describe( 'actions', () => {
 			} );
 
 			it( 'should dispatch fail action when request fails', () => {
-				return requestThemes( 1916284, true )( spy ).then( () => {
+				return requestThemes( 1916284 )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: THEMES_REQUEST_FAILURE,
 						siteId: 1916284,
@@ -241,7 +241,7 @@ describe( 'actions', () => {
 
 		context( 'with a wpcom site', () => {
 			it( 'should dispatch request action when thunk triggered', () => {
-				requestTheme( 'twentysixteen', 2916284 )( spy );
+				requestTheme( 'twentysixteen', 'wpcom' )( spy );
 
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_REQUEST,
@@ -251,7 +251,7 @@ describe( 'actions', () => {
 			} );
 
 			it( 'should dispatch themes receive action when request completes', () => {
-				return requestTheme( 'twentysixteen', 2916284 )( spy ).then( () => {
+				return requestTheme( 'twentysixteen', 'wpcom' )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: THEMES_RECEIVE,
 						themes: [
@@ -263,7 +263,7 @@ describe( 'actions', () => {
 			} );
 
 			it( 'should dispatch themes request success action when request completes', () => {
-				return requestTheme( 'twentysixteen', 2916284 )( spy ).then( () => {
+				return requestTheme( 'twentysixteen', 'wpcom' )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: THEME_REQUEST_SUCCESS,
 						siteId: 'wpcom',
@@ -273,7 +273,7 @@ describe( 'actions', () => {
 			} );
 
 			it( 'should dispatch fail action when request fails', () => {
-				return requestTheme( 'twentyumpteen', 2916284 )( spy ).then( () => {
+				return requestTheme( 'twentyumpteen', 'wpcom' )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: THEME_REQUEST_FAILURE,
 						siteId: 'wpcom',
