@@ -26,6 +26,14 @@ RECORD_ENV ?= $(BIN)/record-env
 ALL_DEVDOCS_JS ?= server/devdocs/bin/generate-devdocs-index
 COMPONENTS_USAGE_STATS_JS ?= server/devdocs/bin/generate-components-usage-stats.js
 
+# hash command
+MD5SUM_EXISTS := $(shell command -v md5sum 2> /dev/null)
+ifndef MD5SUM_EXISTS
+HASH := md5
+else
+HASH := md5sum
+endif
+
 # files used as prereqs
 SASS_FILES := $(shell \
 	find client assets \
@@ -60,6 +68,13 @@ COMPONENTS_USAGE_STATS_FILES = $(shell \
 		\( -name '*.js' -or -name '*.jsx' \) \
 )
 CLIENT_CONFIG_FILE := client/config/index.js
+
+CLIENT_STYLE_FILES = $(shell \
+	find client \
+		-type f \
+		-name 'style.scss' \
+)
+CLIENT_STYLE_FILES_HASH = $(shell echo $(CLIENT_STYLE_FILES) | $(HASH)).hash
 
 # variables
 NODE_ENV ?= development
@@ -128,9 +143,13 @@ mixedindentlint: node_modules/mixedindentlint
 $(CLIENT_CONFIG_FILE): .env config/$(CALYPSO_ENV).json config/client.json server/config/regenerate-client.js
 	@$(NODE) server/config/regenerate-client.js > $@
 
-build/_components.scss: $(SASS_FILES)
+build/$(CLIENT_STYLE_FILES_HASH):
+	@rm -f build/*.hash
+	@touch build/$(CLIENT_STYLE_FILES_HASH)
+
+build/_components.scss: build/$(CLIENT_STYLE_FILES_HASH)
 	@mkdir -p build
-	@echo "$(SASS_FILES)" | tr " " "\n" | grep style\\.scss | sed "/^assets\// d ; s/^client\//@import '/; s/$$/';/ ; s/\.scss// ; s/_//g" > $@
+	@echo "$(CLIENT_STYLE_FILES)" | tr " " "\n" | sed "s/^client\//@import '/; s/$$/';/ ; s/\.scss//" > $@
 
 public/style-rtl.css: public/style.css
 
