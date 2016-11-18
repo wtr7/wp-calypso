@@ -36,7 +36,11 @@ class QueryThemes extends Component {
 
 	request( props ) {
 		if ( ! props.isRequesting ) {
-			props.requestThemes( props.siteId, props.isJetpackSite, props.query );
+			let siteId = { props };
+			if ( ! props.isJetpackSite ) {
+				siteId = 'wpcom';
+			}
+			props.requestThemes( siteId, props.query );
 		}
 	}
 
