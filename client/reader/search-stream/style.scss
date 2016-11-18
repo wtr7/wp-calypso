@@ -8,6 +8,10 @@
 	margin: 0;
 }
 
+.is-reader-page .search-stream__input-card.card {
+	box-shadow: 0 0 0 2px rgba(200, 215, 225, 0.5), 0 1px 2px #e9eff3;
+ }
+
 .search-stream__input-card.card {
 	margin-bottom: 16px;
 	padding: 0;
