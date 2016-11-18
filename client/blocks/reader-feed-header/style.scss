@@ -3,6 +3,14 @@
 	margin-bottom: 40px;
 	width: 100%;
 
+	@include breakpoint( ">960px" ) {
+		margin-top: -18px;
+	}
+
+	@include breakpoint( "<660px" ) {
+		margin-top: 15px;
+	}
+
 	.site__content {
 		display: flex;
 		flex-direction: column;
@@ -16,14 +24,14 @@
 	}
 
 	.site__info {
-		margin-top: 20px;
+		margin-top: 17px;
 		width: 100%;
 	}
 
 	.site__title {
 		font-family: $serif;
 		font-size: 25px;
-		font-weight: 600;
+		font-weight: 700;
 		overflow: inherit;
 		text-align: center;
 
@@ -43,14 +51,26 @@
 	}
 
 	.reader-feed-header__follow {
+		align-items: center;
 		display: flex;
 		flex-direction: row;
+		justify-content: center;
+		margin-bottom: 14px;
+
+		@include breakpoint( ">960px" ) {
+			margin-bottom: 0;
+			position: relative;
+				top: 17px;
+		}
 	}
 
 	.reader-feed-header__follow-count {
 		color: lighten( $gray, 10% );
 		font-size: 14px;
-		margin-left: auto;
+
+		@include breakpoint( ">960px") {
+			margin-left: auto;
+		}
 	}
 
 	.reader-feed-header__follow-button .follow-button {
@@ -58,11 +78,26 @@
 		padding: 0;
 
 		.gridicon {
-			fill: $blue-wordpress;
+			fill: $blue-medium;
 		}
 
 		.follow-button__label {
-			color: $blue-wordpress;
+			color: $blue-medium;
+
+			@include breakpoint( "<660px" ) {
+				display: inline;
+			}
+		}
+
+		&.is-following {
+
+			.gridicon {
+				fill: $alert-green;
+			}
+
+			.follow-button__label {
+				color: $alert-green;
+			}
 		}
 	}
 }
@@ -74,7 +109,11 @@
 
 	&.reader-feed-header__site {
 		margin: 0 auto;
-		width: 50%;
+		width: 80%;
+
+		@include breakpoint( ">960px" ) {
+			width: 50%;
+		}
 	}
 }
 
