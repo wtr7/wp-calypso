@@ -3,75 +3,153 @@
 /**
  * External dependencies
  */
-import conforms from 'lodash/conforms';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:themes:actions' ); //eslint-disable-line no-unused-vars
-import property from 'lodash/property';
 
 /**
  * Internal dependencies
  */
+import wpcom from 'lib/wp';
 import {
-	THEME_ACTIVATE_REQUEST,
-	THEME_ACTIVATE_REQUEST_SUCCESS,
-	THEME_ACTIVATE_REQUEST_FAILURE,
-	THEME_BACK_PATH_SET,
-	THEME_CLEAR_ACTIVATED,
-	THEME_DETAILS_RECEIVE,
-	THEME_DETAILS_RECEIVE_FAILURE,
-	THEME_DETAILS_REQUEST,
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
 	ACTIVE_THEME_REQUEST_FAILURE,
-	THEMES_INCREMENT_PAGE,
-	THEMES_QUERY,
+	THEME_REQUEST,
+	THEME_REQUEST_SUCCESS,
+	THEME_REQUEST_FAILURE,
 	THEMES_RECEIVE,
+	THEMES_REQUEST,
+	THEMES_REQUEST_SUCCESS,
+	THEMES_REQUEST_FAILURE,
+	THEME_ACTIVATE_REQUEST,
+	THEME_ACTIVATE_REQUEST_SUCCESS,
+	THEME_ACTIVATE_REQUEST_FAILURE,
 	THEMES_RECEIVE_SERVER_ERROR,
-} from '../action-types';
-import { getCurrentTheme } from './current-theme/selectors';
+} from 'state/action-types';
 import {
 	recordTracksEvent,
 	withAnalytics
 } from 'state/analytics/actions';
-import { isJetpackSite } from 'state/sites/selectors';
-import { getQueryParams } from './themes-list/selectors';
+import { getCurrentTheme } from './current-theme/selectors';
 import { getThemeById } from './themes/selectors';
-import wpcom from 'lib/wp';
 
-export function fetchThemes( site ) {
-	return ( dispatch, getState ) => {
-		const queryParams = getQueryParams( getState() );
-		const startTime = new Date().getTime();
+const debug = debugFactory( 'calypso:themes:actions' ); //eslint-disable-line no-unused-vars
 
-		debug( 'Query params', queryParams );
-
-		return wpcom.undocumented().themes( site, queryParams )
-			.then( themes => {
-				const responseTime = ( new Date().getTime() ) - startTime;
-				return dispatch( receiveThemes( themes, site, queryParams, responseTime ) );
-			} )
-			.catch( error => receiveServerError( error ) );
-	};
+/**
+ * Returns an action object to be used in signalling that a theme object has
+ * been received.
+ *
+ * @param  {Object} theme  Theme received
+ * @param  {Number} siteId ID of site for which themes have been received
+ * @return {Object}        Action object
+ */
+export function receiveTheme( theme, siteId ) {
+	return receiveThemes( [ theme ], siteId );
 }
 
-export function fetchNextPage( site ) {
-	return dispatch => {
-		dispatch( incrementThemesPage( site ) );
-		return dispatch( fetchThemes( site ) );
-	};
-}
-
-export function query( params ) {
+/**
+ * Returns an action object to be used in signalling that theme objects have
+ * been received.
+ *
+ * @param  {Array}  themes Themes received
+ * @param  {Number} siteId ID of site for which themes have been received
+ * @return {Object}        Action object
+ */
+export function receiveThemes( themes, siteId ) {
 	return {
-		type: THEMES_QUERY,
-		params: params
+		type: THEMES_RECEIVE,
+		themes,
+		siteId
 	};
 }
 
-export function incrementThemesPage( site ) {
-	return {
-		type: THEMES_INCREMENT_PAGE,
-		site: site
+/**
+ * Triggers a network request to fetch themes for the specified site and query.
+ *
+ * @param  {?Number}  siteId    Site ID
+ * @param  {Boolean}  isJetpack If the site is a Jetpack site
+ * @param  {String}   query     Theme query
+ * @return {Function}           Action thunk
+ */
+export function requestThemes( siteId, isJetpack = false, query = {} ) {
+	return ( dispatch ) => {
+		let siteIdToQuery, siteIdToStore, queryWithApiVersion;
+
+		if ( isJetpack ) {
+			siteIdToQuery = siteId;
+			siteIdToStore = siteId;
+			queryWithApiVersion = { ...query, apiVersion: '1' };
+		} else {
+			siteIdToQuery = null;
+			siteIdToStore = 'wpcom'; // Themes for all wpcom sites go into 'wpcom' subtree
+			queryWithApiVersion = { ...query, apiVersion: '1.2' };
+		}
+		dispatch( {
+			type: THEMES_REQUEST,
+			siteId: siteIdToStore,
+			query
+		} );
+
+		return wpcom.undocumented().themes( siteIdToQuery, queryWithApiVersion ).then( ( { found, themes } ) => {
+			dispatch( receiveThemes( themes, siteIdToStore ) );
+			dispatch( {
+				type: THEMES_REQUEST_SUCCESS,
+				siteId: siteIdToStore,
+				query,
+				found,
+				themes
+			} );
+		} ).catch( ( error ) => {
+			dispatch( {
+				type: THEMES_REQUEST_FAILURE,
+				siteId: siteIdToStore,
+				query,
+				error
+			} );
+		} );
+	};
+}
+
+/**
+ * Triggers a network request to fetch a specific theme from a site.
+ *
+ * @param  {Number}   themeId Theme ID
+ * @param  {Number}   siteId Site ID
+ * @param  {Boolean}  isJetpack If the site is a Jetpack site
+ * @return {Function}        Action thunk
+ */
+export function requestTheme( themeId, siteId, isJetpack = false ) {
+	return ( dispatch ) => {
+		let siteIdToQuery, siteIdToStore;
+
+		if ( isJetpack ) {
+			siteIdToQuery = siteId;
+			siteIdToStore = siteId;
+		} else {
+			siteIdToQuery = null;
+			siteIdToStore = 'wpcom'; // Themes for all wpcom sites go into 'wpcom' subtree
+		}
+
+		dispatch( {
+			type: THEME_REQUEST,
+			siteId: siteIdToStore,
+			themeId
+		} );
+
+		return wpcom.undocumented().themeDetails( themeId, siteIdToQuery ).then( ( theme ) => {
+			dispatch( receiveTheme( theme, siteIdToStore ) );
+			dispatch( {
+				type: THEME_REQUEST_SUCCESS,
+				siteId: siteIdToStore,
+				themeId
+			} );
+		} ).catch( ( error ) => {
+			dispatch( {
+				type: THEME_REQUEST_FAILURE,
+				siteId: siteIdToStore,
+				themeId,
+				error
+			} );
+		} );
 	};
 }
 
@@ -110,94 +188,10 @@ export function requestActiveTheme( siteId ) {
 	};
 }
 
-export function fetchThemeDetails( id, site ) {
-	return dispatch => {
-		dispatch( {
-			type: THEME_DETAILS_REQUEST,
-			themeId: id
-		} );
-
-		wpcom.undocumented().themeDetails( id, site )
-			.then( themeDetails => {
-				debug( 'Received theme details', themeDetails );
-				dispatch( receiveThemeDetails( themeDetails ) );
-			} )
-			.catch( error => {
-				dispatch( receiveThemeDetailsFailure( id, error ) );
-			} );
-	};
-}
-
-export function receiveThemeDetails( theme ) {
-	return {
-		type: THEME_DETAILS_RECEIVE,
-		themeId: theme.id,
-		themeName: theme.name,
-		themeAuthor: theme.author,
-		themePrice: theme.price,
-		themeScreenshot: theme.screenshot,
-		themeScreenshots: theme.screenshots,
-		themeDescription: theme.description,
-		themeDescriptionLong: theme.description_long,
-		themeSupportDocumentation: theme.support_documentation || undefined,
-		themeDownload: theme.download_uri || undefined,
-		themeTaxonomies: theme.taxonomies,
-		themeStylesheet: theme.stylesheet,
-		themeDemoUri: theme.demo_uri
-	};
-}
-
-export function receiveThemeDetailsFailure( id, error ) {
-	debug( `Received error for theme ${ id }:`, error );
-	return {
-		type: THEME_DETAILS_RECEIVE_FAILURE,
-		themeId: id,
-		error: error,
-	};
-}
-
 export function receiveServerError( error ) {
 	return {
 		type: THEMES_RECEIVE_SERVER_ERROR,
 		error: error
-	};
-}
-
-const isFirstPageOfSearch = conforms( {
-	search: a => undefined !== a,
-	page: a => a === 1
-} );
-
-export function receiveThemes( data, site, queryParams, responseTime ) {
-	return ( dispatch, getState ) => {
-		const themeAction = {
-			type: THEMES_RECEIVE,
-			siteId: site.ID,
-			isJetpack: !! site.jetpack,
-			wasJetpack: isJetpackSite( getState(), site.ID ),
-			themes: data.themes,
-			found: data.found,
-			queryParams: queryParams
-		};
-
-		const trackShowcaseSearch = recordTracksEvent(
-			'calypso_themeshowcase_search',
-			{
-				search_term: queryParams.search || null,
-				tier: queryParams.tier,
-				response_time_in_ms: responseTime,
-				result_count: data.found,
-				results_first_page: data.themes.map( property( 'id' ) )
-			}
-		);
-
-		const action = isFirstPageOfSearch( queryParams )
-			? withAnalytics( trackShowcaseSearch, themeAction )
-			: themeAction;
-
-		dispatch( action );
-
-		return action;
 	};
 }
 
@@ -251,18 +245,4 @@ export function themeActivated( theme, siteId, source = 'unknown', purchased = f
 		dispatch( withAnalytics( trackThemeActivation, action ) );
 	};
 	return themeActivatedThunk; // it is named function just for testing purposes
-}
-
-export function clearActivated() {
-	return {
-		type: THEME_CLEAR_ACTIVATED
-	};
-}
-
-// Set destination for 'back' button on theme sheet
-export function setBackPath( path ) {
-	return {
-		type: THEME_BACK_PATH_SET,
-		path: path,
-	};
 }
