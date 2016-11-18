@@ -1815,6 +1815,12 @@ Undocumented.prototype.submitKayakoTicket = function( subject, message, locale, 
 	}, fn );
 };
 
+Undocumented.prototype.getKayakoConfiguration = function( fn ) {
+	return this.wpcom.req.get( {
+		path: '/help/tickets/kayako/mine',
+	}, fn );
+};
+
 /**
  * Get the olark configuration for the current user
  *
