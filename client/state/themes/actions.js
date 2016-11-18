@@ -65,9 +65,9 @@ export function receiveThemes( themes, siteId ) {
 /**
  * Triggers a network request to fetch themes for the specified site and query.
  *
- * @param  {Number|String}  siteId  Jetpack site ID or 'wpcom' for any WPCOM site
- * @param  {String}         query   Theme query
- * @return {Function}               Action thunk
+ * @param  {Number|String} siteId Jetpack site ID or 'wpcom' for any WPCOM site
+ * @param  {String}        query  Theme query
+ * @return {Function}             Action thunk
  */
 export function requestThemes( siteId, query = {} ) {
 	return ( dispatch ) => {
@@ -110,9 +110,9 @@ export function requestThemes( siteId, query = {} ) {
 /**
  * Triggers a network request to fetch a specific theme from a site.
  *
- * @param  {Number}   themeId Theme ID
- * @param  {Number}   siteId Site ID
- * @return {Function}        Action thunk
+ * @param  {String}   themeId Theme ID
+ * @param  {Number}   siteId  Site ID
+ * @return {Function}         Action thunk
  */
 export function requestTheme( themeId, siteId ) {
 	return ( dispatch ) => {
@@ -153,8 +153,8 @@ export function requestTheme( themeId, siteId ) {
  * If request success information about active theme is stored in Redux themes subtree.
  * In case of error, error is stored in Redux themes subtree.
  *
- * @param  {Object} siteId Site for which to check active theme
- * @return {Object}        Redux thunk with request action
+ * @param  {Number}   siteId Site for which to check active theme
+ * @return {Function}        Redux thunk with request action
  */
 export function requestActiveTheme( siteId ) {
 	return dispatch => {
@@ -190,6 +190,15 @@ export function receiveServerError( error ) {
 	};
 }
 
+/**
+ * Triggers a network request to activate a specific theme on a given site.
+ *
+ * @param  {String}   themeId   Theme ID
+ * @param  {Number}   siteId    Site ID
+ * @param  {String}   source    The source that is reuquesting theme activation, e.g. 'showcase'
+ * @param  {Boolean}  purchased Whether the theme has been purchased prior to activation
+ * @return {Function}           Action thunk
+ */
 export function activateTheme( themeId, siteId, source = 'unknown', purchased = false ) {
 	return dispatch => {
 		dispatch( {
@@ -213,6 +222,16 @@ export function activateTheme( themeId, siteId, source = 'unknown', purchased = 
 	};
 }
 
+/**
+ * Returns an action thunk to be used in signalling that a theme has been activated
+ * on a given site.
+ *
+ * @param  {Object}   theme     Theme object
+ * @param  {Number}   siteId    Site ID
+ * @param  {String}   source    The source that is reuquesting theme activation, e.g. 'showcase'
+ * @param  {Boolean}  purchased Whether the theme has been purchased prior to activation
+ * @return {Function}           Action thunk
+ */
 export function themeActivated( theme, siteId, source = 'unknown', purchased = false ) {
 	const themeActivatedThunk = ( dispatch, getState ) => {
 		if ( typeof theme !== 'object' ) {
