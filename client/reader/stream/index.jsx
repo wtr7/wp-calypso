@@ -75,7 +75,8 @@ module.exports = React.createClass( {
 		className: React.PropTypes.string,
 		showDefaultEmptyContentIfMissing: React.PropTypes.bool,
 		showPrimaryFollowButtonOnCards: React.PropTypes.bool,
-		showMobileBackToSidebar: React.PropTypes.bool
+		forceEmpty: React.PropTypes.bool,
+		showMobileBackToSidebar: React.PropTypes.bool,
 	},
 
 	getDefaultProps: function() {
@@ -87,6 +88,7 @@ module.exports = React.createClass( {
 			className: '',
 			showDefaultEmptyContentIfMissing: true,
 			showPrimaryFollowButtonOnCards: true,
+			forceEmpty: false,
 			showMobileBackToSidebar: true
 		};
 	},

@@ -24,9 +24,18 @@ import i18nUtils from 'lib/i18n-utils';
 import { suggestions } from './suggestions';
 import SearchCard from 'blocks/reader-search-card';
 import ReaderPostCard from 'blocks/reader-post-card';
+import { RelatedPostCard } from 'blocks/reader-related-card-v2';
 import config from 'config';
 
-const SearchCardAdapter = React.createClass( {
+function RecommendedPosts( { post, site, } ) {
+	return (
+		<li className="reader-related-card-v2__list-item">
+			<RelatedPostCard key={ post.global_ID } post={ post } site={ site } />
+		</li>
+	);
+}
+
+const SearchCardAdapter = ( isRecommendations ) => React.createClass( {
 	getInitialState() {
 		return this.getStateFromStores();
 	},
@@ -75,7 +84,16 @@ const SearchCardAdapter = React.createClass( {
 
 	render() {
 		const isRefreshedStream = config.isEnabled( 'reader/refresh/stream' );
-		const CardComponent = isRefreshedStream ? ReaderPostCard : SearchCard;
+		let CardComponent;
+
+		if ( ! isRefreshedStream ) {
+			CardComponent = SearchCard;
+		} else if ( isRecommendations ) {
+			CardComponent = RecommendedPosts;
+		} else {
+			CardComponent = ReaderPostCard;
+		}
+
 		return <CardComponent
 			post={ this.props.post }
 			site={ this.props.site }
@@ -157,7 +175,7 @@ const SearchStream = React.createClass( {
 	},
 
 	cardFactory() {
-		return SearchCardAdapter;
+		return SearchCardAdapter( ! this.props.query );
 	},
 
 	render() {
@@ -192,9 +210,37 @@ const SearchStream = React.createClass( {
 						delayTimeout={ 500 }
 						placeholder={ searchPlaceholderText } />
 				</CompactCard>
+				{ ! this.props.query && (
+					<p className="search-stream__blank-suggestions">
+						{ this.props.translate( 'Suggestions: {{suggestions /}}.', { components: { suggestions: ['sugList', ' sug2'] } } ) }
+					</p>
+				) }
 			</Stream>
 		);
 	}
 } );
 
 export default localize( SearchStream );
+/*
+export function RefreshedBlankContent( { translate, suggestions } ) {
+	if ( suggestions ) {
+		let sugList = suggestions
+			.map( function( query ) {
+				return (
+					<Suggestion suggestion={ query } />
+				);
+			} );
+		sugList = sugList
+			.slice( 1 )
+			.reduce( function( xs, x ) {
+				return xs.concat( [ ', ', x ] );
+			}, [ sugList[ 0 ] ] );
+
+		const suggest = (
+			<p className="search-stream__blank-suggestions">
+				{ translate( 'Suggestions: {{suggestions /}}.', { components: { suggestions: sugList } } ) }
+			</p> );
+	}
+	return suggest;
+}
+*/
