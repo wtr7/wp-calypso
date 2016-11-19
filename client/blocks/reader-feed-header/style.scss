@@ -1,6 +1,8 @@
 .reader-feed-header {
+	border-bottom: 1px solid lighten( $gray, 30% );
 	margin: 0 auto;
-	margin-bottom: 40px;
+	margin-bottom: 0;
+	padding-bottom: 60px;
 	width: 100%;
 
 	@include breakpoint( ">960px" ) {
@@ -34,6 +36,7 @@
 		font-weight: 700;
 		overflow: inherit;
 		text-align: center;
+		white-space: normal;
 
 		&::after {
 			background: none;
