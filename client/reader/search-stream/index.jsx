@@ -23,6 +23,7 @@ import { recordTrackForPost } from 'reader/stats';
 import i18nUtils from 'lib/i18n-utils';
 import { suggestions } from './suggestions';
 import SearchCard from 'blocks/reader-search-card';
+import Suggestion from './suggestion';
 import ReaderPostCard from 'blocks/reader-post-card';
 import { RelatedPostCard } from 'blocks/reader-related-card-v2';
 import config from 'config';
@@ -191,6 +192,17 @@ const SearchStream = React.createClass( {
 			searchPlaceholderText = this.props.translate( 'Search billions of WordPress.com posts…' );
 		}
 
+		let sugList = this.state.suggestions.map( function( query ) {
+				return (
+					<Suggestion suggestion={ query } />
+				);
+			} );
+		sugList = sugList
+			.slice( 1 )
+			.reduce( function( xs, x ) {
+				return xs.concat( [ ', ', x ] );
+			}, [ sugList[ 0 ] ] );
+
 		return (
 			<Stream { ...this.props } store={ store }
 				listName={ this.props.translate( 'Search' ) }
@@ -212,7 +224,7 @@ const SearchStream = React.createClass( {
 				</CompactCard>
 				{ ! this.props.query && (
 					<p className="search-stream__blank-suggestions">
-						{ this.props.translate( 'Suggestions: {{suggestions /}}.', { components: { suggestions: ['sugList', ' sug2'] } } ) }
+						{ this.props.translate( 'Suggestions: {{suggestions /}}.', { components: { suggestions: sugList } } ) }
 					</p>
 				) }
 			</Stream>
