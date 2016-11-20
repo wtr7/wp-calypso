@@ -14,7 +14,7 @@ import ThemesList from 'components/themes-list';
 import StickyPanel from 'components/sticky-panel';
 import analytics from 'lib/analytics';
 import buildUrl from 'lib/mixins/url-search/build-url';
-import { getSiteSlug } from 'state/sites/selectors';
+import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import { isActiveTheme } from 'state/themes/current-theme/selectors';
 import {
 	getThemesForQueryIgnoringPage,
@@ -51,6 +51,10 @@ const ThemesSelection = React.createClass( {
 		vertical: React.PropTypes.string,
 		// connected props
 		siteSlug: React.PropTypes.string,
+		siteIdOrWpcom: React.PropTypes.oneOfType( [
+			React.PropTypes.number,
+			React.PropTypes.oneOf( [ 'wpcom' ] )
+		] ),
 		isActiveTheme: React.PropTypes.func,
 		isThemePurchased: React.PropTypes.func,
 	},
@@ -136,7 +140,7 @@ const ThemesSelection = React.createClass( {
 	},
 
 	render() {
-		const { selectedSite: site, siteId, query } = this.props;
+		const { selectedSite: site, siteIdOrWpcom, query } = this.props;
 
 		return (
 			<div className="themes__selection">
@@ -150,7 +154,7 @@ const ThemesSelection = React.createClass( {
 				</StickyPanel>
 				<QueryThemes
 					query={ query }
-					siteId={ siteId } />
+					siteId={ siteIdOrWpcom } />
 				<ThemesList themes={ this.props.themes }
 					fetchNextPage={ this.fetchNextPage }
 					getButtonOptions={ this.props.getOptions }
@@ -167,17 +171,22 @@ const ThemesSelection = React.createClass( {
 } );
 
 export default connect(
-	( state, { query, siteId } ) => ( {
-		siteSlug: getSiteSlug( state, siteId ),
-		themes: getThemesForQueryIgnoringPage( state, siteId || 'wpcom', query ) || [],
-		isRequesting: isRequestingThemesForQuery( state, siteId || 'wpcom', query ),
-		isRequestingIgnoringQuery: isRequestingThemesForQueryIgnoringPage( state, siteId || 'wpcom', query ),
-		isLastPage: isThemesLastPageForQuery( state, siteId || 'wpcom', query ),
-		isActiveTheme: themeId => isActiveTheme( state, themeId, siteId ),
-		// Note: This component assumes that purchase data is already present in the state tree
-		// (used by the isThemePurchased selector). At the time of implementation there's no caching
-		// in <QuerySitePurchases /> and a parent component is already rendering it. So to avoid
-		// redundant AJAX requests, we're not rendering the query component locally.
-		isThemePurchased: themeId => isThemePurchased( state, themeId, siteId ),
-	} )
+	( state, { query, siteId } ) => {
+		const isJetpack = isJetpackSite( state, siteId );
+		const siteIdOrWpcom = ( siteId && isJetpack ) ? siteId : 'wpcom';
+		return {
+			siteIdOrWpcom,
+			siteSlug: getSiteSlug( state, siteId ),
+			themes: getThemesForQueryIgnoringPage( state, siteIdOrWpcom, query ) || [],
+			isRequesting: isRequestingThemesForQuery( state, siteIdOrWpcom, query ),
+			isRequestingIgnoringQuery: isRequestingThemesForQueryIgnoringPage( state, siteIdOrWpcom, query ),
+			isLastPage: isThemesLastPageForQuery( state, siteIdOrWpcom, query ),
+			isActiveTheme: themeId => isActiveTheme( state, themeId, siteId ),
+			// Note: This component assumes that purchase data is already present in the state tree
+			// (used by the isThemePurchased selector). At the time of implementation there's no caching
+			// in <QuerySitePurchases /> and a parent component is already rendering it. So to avoid
+			// redundant AJAX requests, we're not rendering the query component locally.
+			isThemePurchased: themeId => isThemePurchased( state, themeId, siteId ),
+		};
+	}
 )( ThemesSelection );
