@@ -75,6 +75,7 @@ const RemovePurchase = React.createClass( {
 
 	openChat() {
 		olarkActions.expandBox();
+		olarkActions.focusBox();
 		this.setState( { isDialogVisible: false } );
 	},
 
