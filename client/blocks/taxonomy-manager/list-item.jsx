@@ -70,6 +70,7 @@ class TaxonomyManagerListItem extends Component {
 				</span>
 				<span className="taxonomy-manager__label">
 					<span>{ name }</span>
+
 					{ isDefault &&
 						<span className="taxonomy-manager__default-label">
 							{ translate( 'default', { context: 'label for terms marked as default' } ) }
@@ -80,7 +81,7 @@ class TaxonomyManagerListItem extends Component {
 				<Gridicon
 					icon="ellipsis"
 					className={ classNames( {
-						'taxonomy-manager__list-item-toggle': true,
+						'taxonomy-manager__item-toggle': true,
 						'is-active': this.state.popoverMenuOpen
 					} ) }
 					onClick={ this.togglePopoverMenu }
